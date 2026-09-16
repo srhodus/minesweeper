@@ -2,9 +2,6 @@
 
 package require Tk
 
-# ------------------------------------------------------------------------------
-# Game Configuration & Global State
-# ------------------------------------------------------------------------------
 set ROWS 10
 set COLS 10
 set BOMBS 12
@@ -25,9 +22,6 @@ array set board {}
 array set state {}
 array set btn {}
 
-# ------------------------------------------------------------------------------
-# UI Setup
-# ------------------------------------------------------------------------------
 wm title . "Tk Minesweeper"
 wm resizable . 0 0
 
@@ -44,10 +38,6 @@ pack .top.timer -side right -padx 5
 
 frame .board -bd 2 -relief ridge
 pack .board -padx 5 -pady 5
-
-# ------------------------------------------------------------------------------
-# Game Logic
-# ------------------------------------------------------------------------------
 
 proc reset_game {} {
     global ROWS COLS BOMBS flags_left time_elapsed timer_id game_over game_started revealed_count board state btn
@@ -236,11 +226,21 @@ proc game_loss {} {
 }
 
 proc game_win {} {
-    global game_over timer_id flags_left
+    global game_over timer_id flags_left board btn state ROWS COLS
     set game_over 1
     after cancel $timer_id
     set flags_left 0
     .top.reset configure -text "😎"
+
+    # Automatically flag all remaining unrevealed bombs
+    for {set r 0} {$r < $ROWS} {incr r} {
+        for {set c 0} {$c < $COLS} {incr c} {
+            if {$board($r,$c) eq "B" && $state($r,$c) ne "flagged"} {
+                set state($r,$c) "flagged"
+                $btn($r,$c) configure -text "🚩" -fg red
+            }
+        }
+    }
 }
 
 reset_game

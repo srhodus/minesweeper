@@ -2,9 +2,9 @@
 
 package require Tk
 
-set ROWS 10
-set COLS 10
-set BOMBS 12
+set ROWS 9
+set COLS 9
+set BOMBS 10
 
 set flags_left $BOMBS
 set time_elapsed 0
